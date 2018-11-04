@@ -1,6 +1,5 @@
 package com.example.travelwith.travelwithandroidapp.asynctask;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -13,10 +12,12 @@ import com.example.travelwith.travelwithandroidapp.activity.TravelFormActivity;
 import com.example.travelwith.travelwithandroidapp.connection.ConnectionWithTravelServer;
 import com.example.travelwith.travelwithandroidapp.connection.Util;
 import com.example.travelwith.travelwithandroidapp.object.User;
-@SuppressLint("StaticFieldLeak")
+
+import java.lang.ref.WeakReference;
+
 public class RegisterUserTask extends AsyncTask<Void, View, Boolean> {
-    private Activity activity;
-    private Context context;
+    private WeakReference<Context> context;
+    private WeakReference<Activity> activity;
     private User currentUser;
     private ProgressDialog progressDialog;
     private Exception exceptionInBackground;
@@ -24,7 +25,7 @@ public class RegisterUserTask extends AsyncTask<Void, View, Boolean> {
 
     protected Boolean doInBackground(Void... test) {
         try {
-            return new ConnectionWithTravelServer(context).registerUser(currentUser.getJSONObject());
+            return new ConnectionWithTravelServer(context.get()).registerUser(currentUser.getJSONObject());
         } catch (Exception e) {
             e.printStackTrace();
             exceptionInBackground = e;
@@ -33,10 +34,10 @@ public class RegisterUserTask extends AsyncTask<Void, View, Boolean> {
     }
 
     protected void onPreExecute() {
-        progressDialog = new ProgressDialog(activity);
+        progressDialog = new ProgressDialog(activity.get());
         progressDialog.setIndeterminate(true);
         progressDialog.setCancelable(false);
-        progressDialog.setMessage(Util.getTranslationProperty("register.massage", context));
+        progressDialog.setMessage(Util.getTranslationProperty("register.massage", context.get()));
         progressDialog.show();
     }
 
@@ -49,27 +50,27 @@ public class RegisterUserTask extends AsyncTask<Void, View, Boolean> {
     private void resultCheck(Boolean result) {
         if (result) {
             progressDialog.dismiss();
-            Intent registerIntent = new Intent(context, TravelFormActivity.class);
-            activity.startActivity(registerIntent);
-            activity.finish();
+            Intent registerIntent = new Intent(context.get(), TravelFormActivity.class);
+            activity.get().startActivity(registerIntent);
+            activity.get().finish();
         } else {
             progressDialog.dismiss();
             progressDialog.cancel();
-            Toast.makeText(context, Util.getTranslationProperty("error.connection", context), Toast.LENGTH_SHORT).show();
+            Toast.makeText(context.get(), Util.getTranslationProperty("error.connection", context.get()), Toast.LENGTH_SHORT).show();
         }
     }
 
     private void exceptionCheck() {
         if (exceptionInBackground != null) {
             progressDialog.dismiss();
-            Toast.makeText(context, Util.getTranslationProperty("error.register", context), Toast.LENGTH_SHORT).show();
+            Toast.makeText(context.get(), Util.getTranslationProperty("error.register", context.get()), Toast.LENGTH_SHORT).show();
             exceptionInBackground = null;
         }
     }
 
     public RegisterUserTask(Context context, User user, Activity activity) {
-        this.context = context;
+        this.context = new WeakReference<>(context);
         currentUser = user;
-        this.activity = activity;
+        this.activity = new WeakReference<>(activity);
     }
 }

@@ -1,41 +1,40 @@
 package com.example.travelwith.travelwithandroidapp;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.widget.EditText;
 
 import com.example.travelwith.travelwithandroidapp.connection.Util;
 
 import java.util.regex.Pattern;
-@SuppressLint("StaticFieldLeak")
+
 public class ValidationHelper {
     private static final String PHONE_NUMBER_REGEX = "^\\d{9}$";
     private static final String PASSWORD_REGEX = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z\\d]{8,64}$";
     private static final String EMAIL_REGEX = "^([a-zA-Z0-9_\\-\\.]+)@([a-zA-Z0-9_\\-\\.]+)\\.([a-zA-Z]{2,5})$";
-    private static Context context;
+    private Context context;
 
     public ValidationHelper(Context context) {
-        ValidationHelper.context = context;
+        this.context = context;
     }
 
 
-    public void checkPhoneNumber(EditText editText) {
+    public void checkPhoneNumberAndSetError(EditText editText) {
         String textToCheck = editText.getText().toString();
         if (!textToCheck.equals(""))
             if (!Pattern.matches(PHONE_NUMBER_REGEX, textToCheck))
-                editText.setError(Util.getTranslationProperty("validation.phone.incorrect", context));
+                setErrorOnEditText(editText, "validation.phone.incorrect");
     }
 
-    public void checkPassword(EditText editText) {
+    public void checkPasswordAndSetError(EditText editText) {
         String textToCheck = editText.getText().toString();
         if (!Pattern.matches(PASSWORD_REGEX, textToCheck))
-            editText.setError(Util.getTranslationProperty("validation.password.incorrect", context));
+            setErrorOnEditText(editText, "validation.password.incorrect");
     }
 
-    public void checkEmail(EditText editText) {
+    public void checkEmailAndSetError(EditText editText) {
         String textToCheck = editText.getText().toString();
         if (!Pattern.matches(EMAIL_REGEX, textToCheck))
-            editText.setError(Util.getTranslationProperty("validation.email.incorrect", context));
+            setErrorOnEditText(editText, "validation.email.incorrect");
     }
 
     public boolean checkEditTextContainsErorrs(EditText... editTextArray) {
@@ -50,15 +49,19 @@ public class ValidationHelper {
     public void checkEmptyEditTextAndSetError(EditText... editTextArray) {
         for (EditText singleEditText : editTextArray) {
             if (singleEditText.getText().toString().equals("")) {
-                singleEditText.setError("Pole " + singleEditText.getHint().toString() + " nie powinno być puste");
+                setErrorOnEditText(singleEditText, "Pole " + singleEditText.getHint().toString() + " nie powinno być puste");
             }
         }
     }
 
 
-    public void checkPasswordDifference(EditText password, EditText repassword) {
+    public void checkPasswordDifferenceAndSetError(EditText password, EditText repassword) {
         if (!password.getText().toString().equals(repassword.getText().toString())) {
-            repassword.setError(Util.getTranslationProperty("validation.password.different", context));
+            setErrorOnEditText(repassword,"validation.password.different");
         }
+    }
+
+    private void setErrorOnEditText(EditText editText, String translationKey) {
+        editText.setError(Util.getTranslationProperty(translationKey, context));
     }
 }

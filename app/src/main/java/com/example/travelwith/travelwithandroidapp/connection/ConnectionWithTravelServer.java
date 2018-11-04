@@ -12,37 +12,37 @@ import java.net.URL;
 public class ConnectionWithTravelServer {
     private Context context;
 
-    public ConnectionWithTravelServer(Context aplicationContext) {
-        context = aplicationContext;
+    public ConnectionWithTravelServer(Context applicationContext) {
+        context = applicationContext;
     }
 
     public boolean checkUserName(String username) throws Exception {
-        URL checkPhone = new URL(Util.getProperty("check.userName", context));
+        URL checkUserNameURL = new URL(Util.getProperty("check.userName", context));
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("userName", username);
-        return sendPostWithProperty(checkPhone, jsonObject);
+        return sendPostWithProperty(checkUserNameURL, jsonObject);
     }
 
     public Boolean checkEmail(String email) throws Exception {
 
-        URL checkPhone = new URL(Util.getProperty("check.email", context));
+        URL checkEmailURL = new URL(Util.getProperty("check.email", context));
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("email", email);
-        return sendPostWithProperty(checkPhone, jsonObject);
+        return sendPostWithProperty(checkEmailURL, jsonObject);
     }
 
     public Boolean registerUser(JSONObject user) throws IOException {
 
-        URL checkPhone = new URL(Util.getProperty("register", context));
-        return sendPostWithProperty(checkPhone, user);
+        URL registerUserURL = new URL(Util.getProperty("register", context));
+        return sendPostWithProperty(registerUserURL, user);
     }
 
     public Boolean checkPhoneNumber(String phone) throws Exception {
 
-        URL checkPhone = new URL(Util.getProperty("check.phoneNumber", context));
+        URL checkPhoneNumberURL = new URL(Util.getProperty("check.phoneNumber", context));
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("phoneNumber", phone);
-        return sendPostWithProperty(checkPhone, jsonObject);
+        return sendPostWithProperty(checkPhoneNumberURL, jsonObject);
     }
 
     private boolean sendPostWithProperty(URL url, JSONObject property) throws IOException {

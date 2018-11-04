@@ -1,6 +1,5 @@
 package com.example.travelwith.travelwithandroidapp.activity;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
@@ -20,8 +19,7 @@ import com.example.travelwith.travelwithandroidapp.object.AESCrypt;
 import com.example.travelwith.travelwithandroidapp.object.User;
 
 public class RegisterActivity extends Activity {
-    @SuppressLint("StaticFieldLeak")
-    private static ValidationHelper validationHelper;
+    private ValidationHelper validationHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,7 +54,7 @@ public class RegisterActivity extends Activity {
                     hideKeyboard(v);
                     new CheckEmailTask(getApplicationContext(), email).execute();
                     validationHelper.checkEmptyEditTextAndSetError(email);
-                    validationHelper.checkEmail(email);
+                    validationHelper.checkEmailAndSetError(email);
                 }
             }
         });
@@ -69,7 +67,7 @@ public class RegisterActivity extends Activity {
                 if (!hasFocus) {
                     hideKeyboard(v);
                     new CheckPhoneTask(getApplicationContext(), phone).execute();
-                    validationHelper.checkPhoneNumber(phone);
+                    validationHelper.checkPhoneNumberAndSetError(phone);
                 }
             }
         });
@@ -83,7 +81,7 @@ public class RegisterActivity extends Activity {
                 if (!hasFocus) {
                     hideKeyboard(v);
                     validationHelper.checkEmptyEditTextAndSetError(password);
-                    validationHelper.checkPassword(password);
+                    validationHelper.checkPasswordAndSetError(password);
                 }
             }
         });
@@ -92,8 +90,7 @@ public class RegisterActivity extends Activity {
                 if (!hasFocus) {
                     hideKeyboard(v);
                     validationHelper.checkEmptyEditTextAndSetError(password, repassword);
-                    EditText password = findViewById(R.id.passwordEditText);
-                    validationHelper.checkPasswordDifference(password, repassword);
+                    validationHelper.checkPasswordDifferenceAndSetError(password, repassword);
                 }
             }
         });
@@ -120,12 +117,11 @@ public class RegisterActivity extends Activity {
                                 AESCrypt.encrypt(getApplicationContext(), password.getText().toString()),
                                 email.getText().toString(),
                                 phone.getText().toString());
+                        new RegisterUserTask(getApplicationContext(), currentUser, activity).execute();
                     } catch (Exception e) {
                         e.printStackTrace();
                         Toast.makeText(getApplicationContext(), Util.getTranslationProperty("error.create.user", getApplicationContext()), Toast.LENGTH_SHORT).show();
-
                     }
-                    new RegisterUserTask(getApplicationContext(), currentUser, activity).execute();
                 }
             }
         });
