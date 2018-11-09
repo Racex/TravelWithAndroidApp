@@ -11,4 +11,8 @@
     <string name="password">Hasło</string>
     <string name="repassword">Powtórz hasło</string>
     <string name="phoneNumber">Nr telefonu*</string>
+    <string name="title_activity_login">LoginActivity</string>
+    <string name="facebook_app_id">2114127058851168</string>
+    <string name="fb_login_protocol_scheme">fb2114127058851168</string>
+    <string name="recovery_password"><u>Przypomnij hasło</u></string>
 </resources>

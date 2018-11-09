@@ -1,6 +1,9 @@
 package com.example.travelwith.travelwithandroidapp.connection;
 
 import android.content.Context;
+import android.util.Base64;
+
+import com.example.travelwith.travelwithandroidapp.object.User;
 
 import org.json.JSONObject;
 
@@ -31,18 +34,23 @@ public class ConnectionWithTravelServer {
         return sendPostWithProperty(checkEmailURL, jsonObject);
     }
 
-    public Boolean registerUser(JSONObject user) throws IOException {
-
-        URL registerUserURL = new URL(Util.getProperty("register", context));
-        return sendPostWithProperty(registerUserURL, user);
-    }
-
     public Boolean checkPhoneNumber(String phone) throws Exception {
 
         URL checkPhoneNumberURL = new URL(Util.getProperty("check.phoneNumber", context));
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("phoneNumber", phone);
         return sendPostWithProperty(checkPhoneNumberURL, jsonObject);
+    }
+
+    public Boolean registerUser(JSONObject user) throws IOException {
+
+        URL registerUserURL = new URL(Util.getProperty("register", context));
+        return sendPostWithProperty(registerUserURL, user);
+    }
+
+    public Boolean loginUser(User userToLogin) throws IOException {
+        URL loginUserURL = new URL(Util.getProperty("login", context));
+        return sendPostWithAuthorization(loginUserURL, userToLogin);
     }
 
     private boolean sendPostWithProperty(URL url, JSONObject property) throws IOException {
@@ -58,5 +66,22 @@ public class ConnectionWithTravelServer {
         osw.close();
         System.out.println(con.getResponseCode());
         return con.getResponseCode() == 200;
+    }
+
+    private boolean sendPostWithAuthorization(URL url, User user) throws IOException {
+        HttpURLConnection con =
+                (HttpURLConnection) url.openConnection();
+        con.setConnectTimeout(Integer.valueOf(Util.getProperty("connection.timeout", context)));
+        setAuthorizationToConnection(con, user);
+        con.setDoInput(true);
+        con.setDoOutput(true);
+        con.setRequestMethod("POST");
+        System.out.println(con.getResponseCode());
+        return con.getResponseCode() == 200;
+    }
+
+    private void setAuthorizationToConnection(HttpURLConnection connection, User user) {
+        String authorizationString = user.getLogin() + ":" + user.getPassword();
+        connection.setRequestProperty("Authorization", "Basic " + Base64.encodeToString(authorizationString.getBytes(), 0));
     }
 }

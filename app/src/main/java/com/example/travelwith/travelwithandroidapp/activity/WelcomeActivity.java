@@ -8,8 +8,21 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.example.travelwith.travelwithandroidapp.R;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
+
+import org.json.JSONObject;
+
+import java.util.Arrays;
 
 public class WelcomeActivity extends Activity {
+
+    CallbackManager callbackManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,29 +31,53 @@ public class WelcomeActivity extends Activity {
         initLogin();
         initLoginWithFacebook();
         initRegistration();
-
     }
 
     private void initLogin() {
         Button login = findViewById(R.id.loginInButton);
         login.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                //In future will be implementation LoginActivity
-                Toast.makeText(v.getContext(), "loguje", Toast.LENGTH_LONG).show();
+                Intent loginIntent = new Intent(getBaseContext(), LoginActivity.class);
+                startActivity(loginIntent);
             }
         });
 
     }
 
     private void initLoginWithFacebook() {
-        Button loginWithFacebook = findViewById(R.id.loginInWithFacebook);
-        loginWithFacebook.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                //In future will be implementation LoginWithFacebookActivity
-                Toast.makeText(v.getContext(), "loguje przez fejsa", Toast.LENGTH_LONG).show();
+        callbackManager = CallbackManager.Factory.create();
+        LoginButton loginWithFacebook = findViewById(R.id.loginInWithFacebook);
+        loginWithFacebook.setReadPermissions(Arrays.asList("public_profile", "email"));
+        loginWithFacebook.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                GraphRequest graphRequest = GraphRequest.newMeRequest(loginResult.getAccessToken(), new GraphRequest.GraphJSONObjectCallback() {
+                    @Override
+                    public void onCompleted(JSONObject object, GraphResponse response) {
+                        //TODO connect with server and transfer user authorization ?
+                        Intent registerIntent = new Intent(getBaseContext(), TravelFormActivity.class);
+                        startActivity(registerIntent);
+                        finish();
+                    }
+                });
+                Bundle parameters = new Bundle();
+                parameters.putString("fields", "id,name,first_name,last_name,email");
+                graphRequest.setParameters(parameters);
+                graphRequest.executeAsync();
+            }
+
+            @Override
+            public void onCancel() {
+                //TODO make toast translation
+                Toast.makeText(getApplicationContext(), "cancel", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onError(FacebookException error) {
+                //TODO make toast translation
+                Toast.makeText(getApplicationContext(), "error", Toast.LENGTH_SHORT).show();
             }
         });
-
     }
 
     private void initRegistration() {
@@ -54,4 +91,9 @@ public class WelcomeActivity extends Activity {
         });
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        callbackManager.onActivityResult(requestCode, resultCode, data);
+    }
 }

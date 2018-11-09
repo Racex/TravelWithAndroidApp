@@ -16,6 +16,11 @@ public class User {
         this.phoneNumber = phoneNumber;
     }
 
+    public User(String login, String password) {
+        this.login = login;
+        this.password = password;
+    }
+
     public JSONObject getJSONObject() throws Exception {
         JSONObject userJsonObject = new JSONObject();
         userJsonObject.put("userName", login);
@@ -23,6 +28,21 @@ public class User {
         userJsonObject.put("password", password);
         userJsonObject.put("phoneNumber", phoneNumber);
         return userJsonObject;
+    }
+
+    public JSONObject getJSONObjectToLogin() throws Exception {
+        JSONObject userJsonObject = new JSONObject();
+        userJsonObject.put("userName", login);
+        userJsonObject.put("password", password);
+        return userJsonObject;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public String getLogin() {
+        return login;
     }
 
 }

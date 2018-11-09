@@ -5,10 +5,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".activity.RegisterActivity"
-    android:background="@drawable/background_register"
+    android:background="#475379"
     android:clickable="true"
     android:focusableInTouchMode="true"
-    android:focusable="true">
+    android:focusable="true"
+    android:gravity="center">
 
     <TextView
         android:id="@+id/registerTextView"

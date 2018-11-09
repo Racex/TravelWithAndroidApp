@@ -49,7 +49,7 @@ public class ValidationHelper {
     public void checkEmptyEditTextAndSetError(EditText... editTextArray) {
         for (EditText singleEditText : editTextArray) {
             if (singleEditText.getText().toString().equals("")) {
-                setErrorOnEditText(singleEditText, "Pole " + singleEditText.getHint().toString() + " nie powinno być puste");
+                singleEditText.setError("Pole " + singleEditText.getHint().toString() + " nie powinno być puste");
             }
         }
     }
@@ -57,7 +57,7 @@ public class ValidationHelper {
 
     public void checkPasswordDifferenceAndSetError(EditText password, EditText repassword) {
         if (!password.getText().toString().equals(repassword.getText().toString())) {
-            setErrorOnEditText(repassword,"validation.password.different");
+            setErrorOnEditText(repassword, "validation.password.different");
         }
     }
 
